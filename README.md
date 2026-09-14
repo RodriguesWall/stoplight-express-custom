@@ -99,15 +99,17 @@ Consumers:
 ```bash
 yarn up stoplight-express-custom
 # or
-yarn add stoplight-express-custom@^0.2.0
+yarn add stoplight-express-custom@^0.2.1
 ```
 
 ## Notes
 
 - Mount with `app.use(...)` (no path prefix) so default routes stay at `/docs` and `/swagger.json`.
 - `config` must be a plain object (Swagger 2 or OpenAPI 3). Mutating it after mount (e.g. `info.version`) still works if you pass the same object reference.
-- Assets are served from the package `static/` folder (`elements.min.js` / `elements.min.css`).
+- Assets are served from the package `static/` folder (`elements.min.js` / `elements.min.css` / `base.css`).
+- `poweredBy` is injected via `/docs-assets/powered-by.js` (external script) so Content-Security-Policy `script-src 'self'` environments work — no inline `<script>`.
 - By default there is **no** “powered by Stoplight” footer. Set `poweredBy` only when you want a custom label.
+- Ensure your reverse proxy forwards **`/docs`**, **`/docs-assets/*`**, and **`/swagger.json`** to the same Node process.
 
 ## License
 

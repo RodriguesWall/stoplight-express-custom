@@ -40,6 +40,14 @@ function stoplightExpressCustom(options = {}) {
     const staticDir = path.join(__dirname, 'static')
     const appRouter = express.Router()
     const poweredByLabel = typeof poweredBy === 'string' ? poweredBy.trim() : ''
+    const poweredByScriptPath = `${assetsPath}/powered-by.js`
+
+    // CSP-safe: external script (script-src 'self'), not inline
+    appRouter.get(poweredByScriptPath, (_req, res) => {
+        res.type('application/javascript').send(
+            `window.__STOPlIGHT_EXPRESS_POWERED_BY__=${JSON.stringify(poweredByLabel)};`
+        )
+    })
 
     appRouter.use(assetsPath, express.static(staticDir))
 
@@ -56,7 +64,7 @@ function stoplightExpressCustom(options = {}) {
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>${escapeHtml(title)}</title>
     <link rel="stylesheet" href="${assetsPath}/elements.min.css">
-    <style>html, body { height: 100%; margin: 0; }</style>
+    <link rel="stylesheet" href="${assetsPath}/base.css">
   </head>
   <body>
     <elements-api
@@ -64,7 +72,7 @@ function stoplightExpressCustom(options = {}) {
       router="${escapeHtml(elementsRouter)}"
       layout="${escapeHtml(layout)}"${hideExportAttr}
     ></elements-api>
-    <script>window.__STOPlIGHT_EXPRESS_POWERED_BY__=${JSON.stringify(poweredByLabel)};</script>
+    <script src="${poweredByScriptPath}"></script>
     <script src="${assetsPath}/elements.min.js"></script>
   </body>
 </html>`
