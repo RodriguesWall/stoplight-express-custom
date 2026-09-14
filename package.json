@@ -1,9 +1,9 @@
-
 {
   "name": "stoplight-express-custom",
   "version": "0.1.0",
   "description": "Express middleware for Stoplight Elements API docs (local bundle)",
   "main": "index.js",
+  "author": "Walace Rodrigues",
   "types": "index.d.ts",
   "files": [
     "index.js",
