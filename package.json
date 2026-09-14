@@ -8,13 +8,11 @@
   "files": [
     "index.js",
     "index.d.ts",
-    "static"
+    "static",
+    "README.md"
   ],
   "peerDependencies": {
     "express": ">=4"
   },
-  "license": "MIT",
-  "dependencies": {
-    "stoplight-express-custom": "^0.2.0"
-  }
+  "license": "MIT"
 }

@@ -4,21 +4,27 @@ Express middleware that serves [Stoplight Elements](https://stoplight.io/open-so
 
 Bundles Elements CSS/JS locally — no CDN required.
 
+**npm:** [stoplight-express-custom](https://www.npmjs.com/package/stoplight-express-custom)
+
 ## Install
 
-**Yarn 4** (GitHub):
-
 ```bash
-yarn add stoplight-express-custom@github:RodriguesWall/stoplight-express-custom
-```
-
-**npm / Yarn classic**:
-
-```bash
-npm install git+https://github.com/RodriguesWall/stoplight-express-custom.git
+yarn add stoplight-express-custom
+# or
+npm install stoplight-express-custom
 ```
 
 **Peer dependency:** `express` >= 4
+
+### Alternative (GitHub)
+
+```bash
+# Yarn 4
+yarn add stoplight-express-custom@github:RodriguesWall/stoplight-express-custom
+
+# npm / Yarn classic
+npm install git+https://github.com/RodriguesWall/stoplight-express-custom.git
+```
 
 ## Quick start
 
@@ -80,6 +86,22 @@ Then open:
 | `router` | `"hash" \| "history" \| "memory"` | `"hash"` | Elements router |
 | `layout` | `"sidebar" \| "stacked"` | `"sidebar"` | Elements layout |
 
+## Publishing updates
+
+Bump `version` in `package.json`, then:
+
+```bash
+npm publish --access public
+```
+
+Consumers:
+
+```bash
+yarn up stoplight-express-custom
+# or
+yarn add stoplight-express-custom@^0.2.0
+```
+
 ## Notes
 
 - Mount with `app.use(...)` (no path prefix) so default routes stay at `/docs` and `/swagger.json`.
@@ -89,6 +111,6 @@ Then open:
 
 ## License
 
-UNLICENSED
+MIT
 
 Repo: [RodriguesWall/stoplight-express-custom](https://github.com/RodriguesWall/stoplight-express-custom)
