@@ -13,5 +13,5 @@
   "peerDependencies": {
     "express": ">=4"
   },
-  "license": "UNLICENSED"
+  "license": "MIT"
 }
