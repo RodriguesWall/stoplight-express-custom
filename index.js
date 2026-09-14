@@ -7,6 +7,7 @@ const express = require('express')
  * @typedef {object} StoplightExpressOptions
  * @property {string} [title]
  * @property {boolean} [export] Show the OpenAPI export button (default true)
+ * @property {string} [poweredBy] Footer label; omit or empty to hide (default hidden)
  * @property {object} config Swagger 2 / OpenAPI document (same shape as swagger-ui)
  * @property {string} [docsPath]
  * @property {string} [swaggerPath]
@@ -23,6 +24,7 @@ function stoplightExpressCustom(options = {}) {
     const {
         title = 'API Documentation',
         export: showExport = true,
+        poweredBy = '',
         config,
         docsPath = '/docs',
         swaggerPath = '/swagger.json',
@@ -37,6 +39,7 @@ function stoplightExpressCustom(options = {}) {
 
     const staticDir = path.join(__dirname, 'static')
     const appRouter = express.Router()
+    const poweredByLabel = typeof poweredBy === 'string' ? poweredBy.trim() : ''
 
     appRouter.use(assetsPath, express.static(staticDir))
 
@@ -61,6 +64,7 @@ function stoplightExpressCustom(options = {}) {
       router="${escapeHtml(elementsRouter)}"
       layout="${escapeHtml(layout)}"${hideExportAttr}
     ></elements-api>
+    <script>window.__STOPlIGHT_EXPRESS_POWERED_BY__=${JSON.stringify(poweredByLabel)};</script>
     <script src="${assetsPath}/elements.min.js"></script>
   </body>
 </html>`

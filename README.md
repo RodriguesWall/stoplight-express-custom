@@ -33,6 +33,7 @@ app.use(
   stoplightExpress({
     title: 'My API Documentation',
     export: true,
+    // poweredBy omitted → footer hidden
     config: swaggerDocument,
   })
 )
@@ -51,6 +52,7 @@ app.use(
   stoplightExpress({
     title: 'MPS API Documentation',
     export: true,
+    poweredBy: 'powered by Mailspike', // optional; omit or "" to hide
     config: swaggerDocument,
   })
 )
@@ -71,6 +73,7 @@ Then open:
 | `config` | `object` | **required** | Swagger 2 / OpenAPI document |
 | `title` | `string` | `"API Documentation"` | HTML `<title>` |
 | `export` | `boolean` | `true` | Show OpenAPI export button (`false` → `hideExport`) |
+| `poweredBy` | `string` | `""` (hidden) | Footer text. Omit or empty → no footer. Example: `"powered by Mailspike"` |
 | `docsPath` | `string` | `"/docs"` | Docs UI path |
 | `swaggerPath` | `string` | `"/swagger.json"` | Spec JSON path |
 | `assetsPath` | `string` | `"/docs-assets"` | CSS/JS static path |
@@ -82,6 +85,7 @@ Then open:
 - Mount with `app.use(...)` (no path prefix) so default routes stay at `/docs` and `/swagger.json`.
 - `config` must be a plain object (Swagger 2 or OpenAPI 3). Mutating it after mount (e.g. `info.version`) still works if you pass the same object reference.
 - Assets are served from the package `static/` folder (`elements.min.js` / `elements.min.css`).
+- By default there is **no** “powered by Stoplight” footer. Set `poweredBy` only when you want a custom label.
 
 ## License
 

@@ -5,6 +5,11 @@ export interface StoplightExpressOptions {
     title?: string
     /** Show OpenAPI export button (default: true) */
     export?: boolean
+    /**
+     * Footer label under the sidebar (e.g. "powered by Mailspike").
+     * Omit or pass `""` to hide the footer (default: hidden).
+     */
+    poweredBy?: string
     /** Swagger 2 / OpenAPI document — same structure as swagger-ui-express */
     config: Record<string, unknown>
     /** Docs UI path (default: "/docs") */
