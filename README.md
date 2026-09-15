@@ -69,8 +69,12 @@ Then open:
 | URL | What |
 | --- | --- |
 | `/docs` | Stoplight Elements UI |
-| `/swagger.json` | Spec JSON |
-| `/docs-assets/*` | Elements static assets |
+| `/docs/swagger.json` | Spec JSON |
+| `/docs/assets/*` | Elements static assets |
+
+Every URL lives under `docsPath`, and the HTML references them with **relative**
+URLs. A single reverse-proxy rule for `/docs*` is enough, and the docs keep working
+when the proxy serves them under a prefix (`https://host/api/docs`).
 
 ## Options
 
@@ -81,8 +85,8 @@ Then open:
 | `export` | `boolean` | `true` | Show OpenAPI export button (`false` → `hideExport`) |
 | `poweredBy` | `string` | `""` (hidden) | Footer text. Omit or empty → no footer. Example: `"powered by Mailspike"` |
 | `docsPath` | `string` | `"/docs"` | Docs UI path |
-| `swaggerPath` | `string` | `"/swagger.json"` | Spec JSON path |
-| `assetsPath` | `string` | `"/docs-assets"` | CSS/JS static path |
+| `swaggerPath` | `string` | `` `${docsPath}/swagger.json` `` | Spec JSON path. An absolute path outside `docsPath` opts out of relative URLs |
+| `assetsPath` | `string` | `` `${docsPath}/assets` `` | CSS/JS static path. An absolute path outside `docsPath` opts out of relative URLs |
 | `router` | `"hash" \| "history" \| "memory"` | `"hash"` | Elements router |
 | `layout` | `"sidebar" \| "stacked"` | `"sidebar"` | Elements layout |
 
@@ -99,17 +103,16 @@ Consumers:
 ```bash
 yarn up stoplight-express-custom
 # or
-yarn add stoplight-express-custom@^0.2.1
+yarn add stoplight-express-custom@^0.3.0
 ```
 
 ## Notes
 
-- Mount with `app.use(...)` (no path prefix) so default routes stay at `/docs` and `/swagger.json`.
 - `config` must be a plain object (Swagger 2 or OpenAPI 3). Mutating it after mount (e.g. `info.version`) still works if you pass the same object reference.
 - Assets are served from the package `static/` folder (`elements.min.js` / `elements.min.css` / `base.css`).
-- `poweredBy` is injected via `/docs-assets/powered-by.js` (external script) so Content-Security-Policy `script-src 'self'` environments work — no inline `<script>`.
+- `poweredBy` is injected via `<docsPath>/assets/powered-by.js` (external script) so Content-Security-Policy `script-src 'self'` environments work — no inline `<script>`.
 - By default there is **no** “powered by Stoplight” footer. Set `poweredBy` only when you want a custom label.
-- Ensure your reverse proxy forwards **`/docs`**, **`/docs-assets/*`**, and **`/swagger.json`** to the same Node process.
+- Your reverse proxy only needs to forward **`/docs`** and everything under it to the Node process. Prefix rewrites (`/api/docs` → `/docs`) are supported — the page resolves its own assets relative to the URL the browser used.
 
 ## License
 

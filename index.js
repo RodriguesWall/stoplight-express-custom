@@ -27,8 +27,8 @@ function stoplightExpressCustom(options = {}) {
         poweredBy = '',
         config,
         docsPath = '/docs',
-        swaggerPath = '/swagger.json',
-        assetsPath = '/docs-assets',
+        swaggerPath,
+        assetsPath,
         router: elementsRouter = 'hash',
         layout = 'sidebar',
     } = options
@@ -37,25 +37,38 @@ function stoplightExpressCustom(options = {}) {
         throw new Error('stoplight-express-custom: `config` (swagger/OpenAPI document) is required')
     }
 
+    const docsMount = normalizePath(docsPath)
+    // Assets and spec default to living *under* docsPath so a single reverse-proxy
+    // rule covers the whole docs UI, and so their URLs can be emitted as relative
+    // references that survive any mount prefix the proxy adds or strips.
+    const assetsMount = assetsPath ? normalizePath(assetsPath) : `${docsMount}/assets`
+    const swaggerMount = swaggerPath ? normalizePath(swaggerPath) : `${docsMount}/swagger.json`
+
+    const assetsRef = relativeTo(docsMount, assetsMount)
+    const swaggerRef = relativeTo(docsMount, swaggerMount)
+
     const staticDir = path.join(__dirname, 'static')
     const appRouter = express.Router()
     const poweredByLabel = typeof poweredBy === 'string' ? poweredBy.trim() : ''
-    const poweredByScriptPath = `${assetsPath}/powered-by.js`
 
     // CSP-safe: external script (script-src 'self'), not inline
-    appRouter.get(poweredByScriptPath, (_req, res) => {
+    appRouter.get(`${assetsMount}/powered-by.js`, (_req, res) => {
         res.type('application/javascript').send(
             `window.__STOPlIGHT_EXPRESS_POWERED_BY__=${JSON.stringify(poweredByLabel)};`
         )
     })
 
-    appRouter.use(assetsPath, express.static(staticDir))
+    appRouter.use(assetsMount, express.static(staticDir))
 
-    appRouter.get(swaggerPath, (_req, res) => {
+    appRouter.get(swaggerMount, (_req, res) => {
         res.json(config)
     })
 
-    appRouter.get(docsPath, (_req, res) => {
+    appRouter.get(docsMount, (req, res) => {
+        const base = documentBase(req)
+        const resolve = ref => escapeHtml(ref.startsWith('/') ? ref : `${base}${ref}`)
+        const asset = name => resolve(`${assetsRef}/${name}`)
+        const specUrl = resolve(swaggerRef)
         const hideExportAttr = showExport === false ? '\n          hideExport' : ''
         const html = `<!doctype html>
 <html lang="en">
@@ -63,23 +76,48 @@ function stoplightExpressCustom(options = {}) {
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>${escapeHtml(title)}</title>
-    <link rel="stylesheet" href="${assetsPath}/elements.min.css">
-    <link rel="stylesheet" href="${assetsPath}/base.css">
+    <link rel="stylesheet" href="${asset('elements.min.css')}">
+    <link rel="stylesheet" href="${asset('base.css')}">
   </head>
   <body>
     <elements-api
-      apiDescriptionUrl="${swaggerPath}"
+      apiDescriptionUrl="${specUrl}"
       router="${escapeHtml(elementsRouter)}"
       layout="${escapeHtml(layout)}"${hideExportAttr}
     ></elements-api>
-    <script src="${poweredByScriptPath}"></script>
-    <script src="${assetsPath}/elements.min.js"></script>
+    <script src="${asset('powered-by.js')}"></script>
+    <script src="${asset('elements.min.js')}"></script>
   </body>
 </html>`
         res.type('html').send(html)
     })
 
     return appRouter
+}
+
+function normalizePath(value) {
+    const trimmed = String(value).trim().replace(/\/+$/, '')
+    if (!trimmed) return ''
+    return trimmed.startsWith('/') ? trimmed : `/${trimmed}`
+}
+
+/**
+ * Reference from the docs page to `target`. Relative (so a reverse-proxy prefix is
+ * preserved) when `target` sits under `from`, otherwise the absolute path.
+ */
+function relativeTo(from, target) {
+    return target.startsWith(`${from}/`) ? target.slice(from.length + 1) : target
+}
+
+/**
+ * Prefix that turns a relative reference into one resolved against the docs page
+ * itself rather than its parent directory. Empty when the request already ends in
+ * `/`, otherwise the page's own last path segment.
+ */
+function documentBase(req) {
+    const url = String(req.originalUrl || req.url || '').split(/[?#]/)[0]
+    if (!url || url.endsWith('/')) return ''
+    return `${url.slice(url.lastIndexOf('/') + 1)}/`
 }
 
 function escapeHtml(value) {

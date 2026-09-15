@@ -14,9 +14,15 @@ export interface StoplightExpressOptions {
     config: Record<string, unknown>
     /** Docs UI path (default: "/docs") */
     docsPath?: string
-    /** Spec JSON path (default: "/swagger.json") */
+    /**
+     * Spec JSON path (default: `${docsPath}/swagger.json`).
+     * Setting an absolute path outside `docsPath` opts out of relative URLs.
+     */
     swaggerPath?: string
-    /** Static assets path for Elements CSS/JS (default: "/docs-assets") */
+    /**
+     * Static assets path for Elements CSS/JS (default: `${docsPath}/assets`).
+     * Setting an absolute path outside `docsPath` opts out of relative URLs.
+     */
     assetsPath?: string
     /** Elements router mode (default: "hash") */
     router?: 'hash' | 'history' | 'memory'
