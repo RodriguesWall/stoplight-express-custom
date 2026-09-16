@@ -105,12 +105,18 @@ stoplightExpress({
 })
 ```
 
-- The visitor's choice is stored in `localStorage` and wins over `theme` on later
-  visits. With `themeToggle: false` the stored value is ignored and `theme` always applies.
+- Only an actual click on the toggle is remembered (`localStorage` key
+  `stoplight-express-custom:theme`), and that choice wins over `theme` on later
+  visits. With `themeToggle: false` nothing is remembered and `theme` always applies.
+  Elements' own `mosaic-theme` entry is written so its internal state matches, but
+  never read — otherwise the light mode it stores by default would override `theme`.
 - The theme is applied on `<html data-theme="...">` before the first paint, so there
   is no flash of the wrong theme on load.
 - `system` resolves in the browser; server-rendered HTML starts from `dark` so the
   page still looks right with JavaScript disabled.
+- `base.css` also fixes the code samples in dark mode: Elements keeps using its
+  light syntax palette there (navy strings on a dark canvas), so its own dark
+  palette is re-applied, and `required` markers use the readable warning color.
 
 ## Publishing updates
 
@@ -125,7 +131,7 @@ Consumers:
 ```bash
 yarn up stoplight-express-custom
 # or
-yarn add stoplight-express-custom@^0.4.0
+yarn add stoplight-express-custom@^0.4.1
 ```
 
 ## Notes

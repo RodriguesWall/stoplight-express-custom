@@ -2,12 +2,18 @@
  * Theme bootstrap for the docs page.
  *
  * Loaded synchronously from <head> so the resolved theme is on <html> before the
- * first paint (no light flash). Elements keeps its own theme mode in
- * localStorage['mosaic-theme'] and falls back to the `data-theme` attribute, so
- * both are written here to keep the UI and the Elements store in sync.
+ * first paint (no light flash).
+ *
+ * Two storage keys are involved. STORAGE_KEY holds the visitor's choice and is
+ * only written by the toggle, so it can be trusted over the configured default.
+ * ELEMENTS_KEY is Elements' own store (it reads `.mode` from there, falling back
+ * to the `data-theme` attribute); it is written but never read, because a value
+ * left behind by Elements itself — light by default — must not be mistaken for a
+ * deliberate choice and override the configured theme.
  */
 ;(function () {
-    var STORAGE_KEY = 'mosaic-theme'
+    var STORAGE_KEY = 'stoplight-express-custom:theme'
+    var ELEMENTS_KEY = 'mosaic-theme'
     var SVG_NS = 'http://www.w3.org/2000/svg'
     // Outlines drawn with `currentColor`; each button shows the theme it switches to.
     var ICON = {
@@ -20,7 +26,7 @@
     var toggleEnabled = dataset.toggle !== 'false'
     var root = document.documentElement
 
-    apply(resolve(toggleEnabled ? storedTheme() || defaultTheme : defaultTheme))
+    apply(resolve(toggleEnabled ? storedTheme() || defaultTheme : defaultTheme), false)
 
     if (toggleEnabled) {
         whenReady(mountToggle)
@@ -28,16 +34,16 @@
 
     function storedTheme() {
         try {
-            var raw = localStorage.getItem(STORAGE_KEY)
-            return raw ? JSON.parse(raw).mode : null
+            return localStorage.getItem(STORAGE_KEY)
         } catch (error) {
             return null
         }
     }
 
-    function persist(theme) {
+    function persist(theme, remember) {
         try {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify({ mode: theme, version: 0 }))
+            localStorage.setItem(ELEMENTS_KEY, JSON.stringify({ mode: theme, version: 0 }))
+            if (remember) localStorage.setItem(STORAGE_KEY, theme)
         } catch (error) {
             /* private mode / storage disabled — theme just won't survive a reload */
         }
@@ -55,10 +61,10 @@
         return root.getAttribute('data-theme') === 'light' ? 'light' : 'dark'
     }
 
-    function apply(theme) {
+    function apply(theme, remember) {
         root.setAttribute('data-theme', theme)
         root.style.colorScheme = theme
-        persist(theme)
+        persist(theme, remember)
     }
 
     function whenReady(callback) {
@@ -77,7 +83,7 @@
         describe(button)
 
         button.addEventListener('click', function () {
-            apply(currentTheme() === 'dark' ? 'light' : 'dark')
+            apply(currentTheme() === 'dark' ? 'light' : 'dark', true)
             button.replaceChild(icon(), button.firstChild)
             describe(button)
         })

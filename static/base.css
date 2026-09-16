@@ -42,3 +42,93 @@ html {
   width: 18px;
   height: 18px;
 }
+
+/*
+ * Elements picks its code-sample palette from a static `colorValues.light` flag
+ * that it never updates, so dark mode still gets the light Prism theme — navy
+ * strings (#032f62) and near-black punctuation over a dark canvas. The rules
+ * below re-apply Elements' own dark palette. `!important` is needed because
+ * prism-react-renderer emits token colors as inline styles.
+ */
+[data-theme='dark'] .token.punctuation,
+[data-theme='dark'] .token.macro.property {
+  color: inherit !important;
+}
+
+[data-theme='dark'] .token.string,
+[data-theme='dark'] .token.attr-value,
+[data-theme='dark'] .token.regex,
+[data-theme='dark'] .token.cdata {
+  color: #a5d6ff !important;
+}
+
+[data-theme='dark'] .token.url,
+[data-theme='dark'] .token.attr-name,
+[data-theme='dark'] .token.function,
+[data-theme='dark'] .token.inserted {
+  color: #d2a8ff !important;
+}
+
+[data-theme='dark'] .token.value,
+[data-theme='dark'] .token.selector,
+[data-theme='dark'] .token.doctype {
+  color: #c792ea !important;
+}
+
+[data-theme='dark'] .token.property,
+[data-theme='dark'] .token.entity,
+[data-theme='dark'] .token.atrule,
+[data-theme='dark'] .token.symbol,
+[data-theme='dark'] .token.command,
+[data-theme='dark'] .token.code {
+  color: #80cbc4 !important;
+}
+
+[data-theme='dark'] .token.boolean,
+[data-theme='dark'] .token.builtin,
+[data-theme='dark'] .token.char,
+[data-theme='dark'] .token.constant {
+  color: #82aaff !important;
+}
+
+[data-theme='dark'] .token.number,
+[data-theme='dark'] .token.list {
+  color: #f78c6c !important;
+}
+
+[data-theme='dark'] .token.keyword,
+[data-theme='dark'] .token.operator,
+[data-theme='dark'] .token.important,
+[data-theme='dark'] .token.rule {
+  color: #ff7b72 !important;
+}
+
+[data-theme='dark'] .token.class-name,
+[data-theme='dark'] .token.class,
+[data-theme='dark'] .token.id,
+[data-theme='dark'] .token.prolog,
+[data-theme='dark'] .token.pseudo-class,
+[data-theme='dark'] .token.pseudo-element,
+[data-theme='dark'] .token.url-reference {
+  color: #7ee787 !important;
+}
+
+[data-theme='dark'] .token.variable,
+[data-theme='dark'] .token.title,
+[data-theme='dark'] .token.namespace,
+[data-theme='dark'] .token.option {
+  color: #b2ccd6 !important;
+}
+
+[data-theme='dark'] .token.comment,
+[data-theme='dark'] .token.blockquote {
+  color: #8b949e !important;
+}
+
+/*
+ * Warning text (the `required` markers) ships as `--color-warning`, a surface
+ * color that reads too dark here; `--color-text-warning` is the text variant.
+ */
+[data-theme='dark'] .sl-text-warning {
+  color: var(--color-text-warning);
+}
