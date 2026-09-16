@@ -28,6 +28,16 @@ export interface StoplightExpressOptions {
     router?: 'hash' | 'history' | 'memory'
     /** Elements layout (default: "sidebar") */
     layout?: 'sidebar' | 'stacked'
+    /**
+     * Initial color theme (default: "dark"). `"system"` follows the OS preference.
+     * A visitor's choice made with the toggle takes precedence on later visits.
+     */
+    theme?: 'dark' | 'light' | 'system'
+    /**
+     * Show the floating dark/light toggle (default: true).
+     * When `false`, `theme` is always enforced and visitor choices are ignored.
+     */
+    themeToggle?: boolean
 }
 
 declare function stoplightExpressCustom(options: StoplightExpressOptions): Router

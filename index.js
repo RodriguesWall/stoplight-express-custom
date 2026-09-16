@@ -14,6 +14,8 @@ const express = require('express')
  * @property {string} [assetsPath]
  * @property {'hash'|'history'|'memory'} [router]
  * @property {'sidebar'|'stacked'} [layout]
+ * @property {'dark'|'light'|'system'} [theme] Initial color theme (default 'dark')
+ * @property {boolean} [themeToggle] Show the dark/light toggle button (default true)
  */
 
 /**
@@ -31,6 +33,8 @@ function stoplightExpressCustom(options = {}) {
         assetsPath,
         router: elementsRouter = 'hash',
         layout = 'sidebar',
+        theme = 'dark',
+        themeToggle = true,
     } = options
 
     if (!config || typeof config !== 'object') {
@@ -50,6 +54,10 @@ function stoplightExpressCustom(options = {}) {
     const staticDir = path.join(__dirname, 'static')
     const appRouter = express.Router()
     const poweredByLabel = typeof poweredBy === 'string' ? poweredBy.trim() : ''
+    const themeMode = theme === 'light' || theme === 'system' ? theme : 'dark'
+    // `system` can only be resolved in the browser; `dark` keeps the page usable
+    // when JavaScript is unavailable and theme.js never gets to correct it.
+    const initialTheme = themeMode === 'light' ? 'light' : 'dark'
 
     // CSP-safe: external script (script-src 'self'), not inline
     appRouter.get(`${assetsMount}/powered-by.js`, (_req, res) => {
@@ -71,13 +79,18 @@ function stoplightExpressCustom(options = {}) {
         const specUrl = resolve(swaggerRef)
         const hideExportAttr = showExport === false ? '\n          hideExport' : ''
         const html = `<!doctype html>
-<html lang="en">
+<html lang="en" data-theme="${initialTheme}">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>${escapeHtml(title)}</title>
     <link rel="stylesheet" href="${asset('elements.min.css')}">
     <link rel="stylesheet" href="${asset('base.css')}">
+    <script
+      src="${asset('theme.js')}"
+      data-default-theme="${themeMode}"
+      data-toggle="${themeToggle === false ? 'false' : 'true'}"
+    ></script>
   </head>
   <body>
     <elements-api
