@@ -16,6 +16,9 @@ const express = require('express')
  * @property {'sidebar'|'stacked'} [layout]
  * @property {'dark'|'light'|'system'} [theme] Initial color theme (default 'dark')
  * @property {boolean} [themeToggle] Show the dark/light toggle button (default true)
+ * @property {boolean} [search] Show the sidebar endpoint filter input (default true)
+ * @property {string} [searchPlaceholder] Placeholder text for the filter input
+ * @property {boolean} [methodIcons] Per-method sidebar icon: circle/square/diamond/triangle for GET/POST/PUT-PATCH/DELETE (default true)
  */
 
 /**
@@ -35,6 +38,9 @@ function stoplightExpressCustom(options = {}) {
         layout = 'sidebar',
         theme = 'dark',
         themeToggle = true,
+        search = true,
+        searchPlaceholder = 'Filter endpoints…',
+        methodIcons = true,
     } = options
 
     if (!config || typeof config !== 'object') {
@@ -78,6 +84,12 @@ function stoplightExpressCustom(options = {}) {
         const asset = name => resolve(`${assetsRef}/${name}`)
         const specUrl = resolve(swaggerRef)
         const hideExportAttr = showExport === false ? '\n          hideExport' : ''
+        const filterScriptTag =
+            search === false
+                ? ''
+                : `\n    <script src="${asset('filter.js')}" data-placeholder="${escapeHtml(searchPlaceholder)}"></script>`
+        const methodIconsScriptTag =
+            methodIcons === false ? '' : `\n    <script src="${asset('method-icons.js')}"></script>`
         const html = `<!doctype html>
 <html lang="en" data-theme="${initialTheme}">
   <head>
@@ -98,7 +110,7 @@ function stoplightExpressCustom(options = {}) {
       router="${escapeHtml(elementsRouter)}"
       layout="${escapeHtml(layout)}"${hideExportAttr}
     ></elements-api>
-    <script src="${asset('powered-by.js')}"></script>
+    <script src="${asset('powered-by.js')}"></script>${filterScriptTag}${methodIconsScriptTag}
     <script src="${asset('elements.min.js')}"></script>
   </body>
 </html>`

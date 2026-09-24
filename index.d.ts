@@ -38,6 +38,15 @@ export interface StoplightExpressOptions {
      * When `false`, `theme` is always enforced and visitor choices are ignored.
      */
     themeToggle?: boolean
+    /** Show the sidebar endpoint filter input (default: true) */
+    search?: boolean
+    /** Placeholder text for the filter input (default: "Filter endpoints…") */
+    searchPlaceholder?: string
+    /**
+     * Per-method sidebar icon — circle (GET), square (POST), diamond (PUT/PATCH),
+     * triangle (DELETE), colored to match the method-verb text (default: true)
+     */
+    methodIcons?: boolean
 }
 
 declare function stoplightExpressCustom(options: StoplightExpressOptions): Router

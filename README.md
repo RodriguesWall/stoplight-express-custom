@@ -91,6 +91,9 @@ when the proxy serves them under a prefix (`https://host/api/docs`).
 | `layout` | `"sidebar" \| "stacked"` | `"sidebar"` | Elements layout |
 | `theme` | `"dark" \| "light" \| "system"` | `"dark"` | Initial color theme. `"system"` follows the OS preference |
 | `themeToggle` | `boolean` | `true` | Show the floating dark/light toggle button |
+| `search` | `boolean` | `true` | Show the sidebar endpoint filter input |
+| `searchPlaceholder` | `string` | `"Filter endpoints…"` | Placeholder text for the filter input |
+| `methodIcons` | `boolean` | `true` | Per-method sidebar icon (circle/square/diamond/triangle for GET/POST/PUT-PATCH/DELETE) instead of the default bullseye |
 
 ## Theme
 

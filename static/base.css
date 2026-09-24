@@ -43,6 +43,32 @@ html {
   height: 18px;
 }
 
+.sl-express-filter {
+  box-sizing: border-box;
+  width: calc(100% - 24px);
+  margin: 8px 12px;
+  padding: 6px 10px;
+  color: var(--color-text);
+  background-color: var(--color-canvas-dialog);
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.sl-express-filter::placeholder {
+  color: var(--color-text);
+  opacity: 0.6;
+}
+
+.sl-express-filter:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+.sl-express-hide {
+  display: none !important;
+}
+
 /*
  * Elements picks its code-sample palette from a static `colorValues.light` flag
  * that it never updates, so dark mode still gets the light Prism theme — navy
@@ -131,4 +157,21 @@ html {
  */
 [data-theme='dark'] .sl-text-warning {
   color: var(--color-text-warning);
+}
+
+/*
+ * HTTP method badges (GET/POST/DELETE/…) use the same green/blue/red for both
+ * themes, tuned for contrast on a light canvas. On dark they read muddy/too dark;
+ * reusing the light-theme hue here keeps the same palette but legible.
+ */
+[data-theme='dark'] .sl-text-success {
+  color: #05b870;
+}
+
+[data-theme='dark'] .sl-text-primary {
+  color: #19abff;
+}
+
+[data-theme='dark'] .sl-text-danger {
+  color: #f05151;
 }
