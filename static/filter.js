@@ -97,8 +97,24 @@
         return groups
     }
 
+    /** Case/separator-insensitive: "user/profile", "user-profile", "UserProfile" all match alike. */
+    function normalize(value) {
+        return value.toLowerCase().replace(/[^a-z0-9]/g, '')
+    }
+
+    function hrefPath(el) {
+        if (el.tagName !== 'A') return ''
+        var href = el.getAttribute('href') || ''
+        try {
+            return decodeURIComponent(href)
+        } catch (e) {
+            return href
+        }
+    }
+
     function matches(el, query) {
-        return el.textContent.toLowerCase().indexOf(query) !== -1
+        var haystack = normalize(el.textContent + hrefPath(el))
+        return haystack.indexOf(normalize(query)) !== -1
     }
 
     function apply() {
